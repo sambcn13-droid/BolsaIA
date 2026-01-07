@@ -1,0 +1,40 @@
+[
+  {
+    "id": "1767374557157",
+    "name": "ETF DIVIDENDOS",
+    "color": "#3B82F6",
+    "holdings": [
+      {
+        "id": "1767374636370",
+        "symbol": "IQQD.DE",
+        "isin": "",
+        "date": "2025-01-01",
+        "shares": 120,
+        "price": 8.41,
+        "fees": 0
+      }
+    ]
+  },
+  {
+    "id": "1767383794773",
+    "name": "DEGIRO",
+    "color": "#10B981",
+    "holdings": [
+      {
+        "id": "1767383794773",
+        "symbol": "NVDA",
+        "isin": "",
+        "date": "2025-01-01",
+        "shares": 5,
+        "price": 134.25,
+        "fees": 3
+      }
+    ]
+  },
+  {
+    "id": "1767718946351",
+    "name": "dividendos",
+    "color": "#EF4444",
+    "holdings": []
+  }
+]

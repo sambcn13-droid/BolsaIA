@@ -1,0 +1,21 @@
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+backend/.env
+
+# Node
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Security
+CLAVES_PARA_RENDER.txt
+keys.txt
+
+# OS
+.DS_Store
+Thumbs.db
