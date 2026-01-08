@@ -566,6 +566,62 @@ def get_sentiment(symbol: str):
         print(f"Sentiment Error: {e}")
         return {"score": 0, "label": "Error", "summary": "Error al analizar noticias."}
 
+@app.get("/api/technical-analysis/{symbol}")
+def get_technical_analysis(symbol: str):
+    """
+    Analiza datos técnicos (OHLC) usando Gemini para dar una recomendación.
+    """
+    try:
+        ticker = yf.Ticker(symbol)
+        hist = ticker.history(period="6mo") # Analizamos los últimos 6 meses
+        
+        if hist.empty:
+            return {"error": "No hay datos para analizar"}
+
+        # Prepare a summary of the data for Gemini
+        last_rows = hist.tail(30) # Last month
+        data_summary = last_rows[['Open', 'High', 'Low', 'Close']].to_string()
+        
+        current_price = hist['Close'].iloc[-1]
+        max_6m = hist['High'].max()
+        min_6m = hist['Low'].min()
+
+        if GEN_API_KEY:
+            model = genai.GenerativeModel('gemini-2.0-flash')
+            prompt = f"""
+            Analiza técnicamente la acción {symbol}.
+            Precio actual: {current_price:.2f}
+            Máximo 6 meses: {max_6m:.2f}
+            Mínimo 6 meses: {min_6m:.2f}
+            
+            Datos recientes (OHLC):
+            {data_summary}
+            
+            Actúa como un analista técnico senior. Identifica:
+            1. Tendencia actual (Alcista/Bajista/Lateral)
+            2. Niveles clave de Soporte y Resistencia.
+            3. Una recomendación final resumida.
+            
+            Responde ÚNICAMENTE con un JSON:
+            {{
+                "trend": "string",
+                "support": float,
+                "resistance": float,
+                "summary": "Resumen en español (máx 200 caracteres)",
+                "action": "COMPRAR | VENDER | MANTENER"
+            }}
+            """
+            
+            response = model.generate_content(prompt)
+            cleaned_text = response.text.replace('```json', '').replace('```', '').strip()
+            return json.loads(cleaned_text)
+            
+        return {"trend": "Neutral", "summary": "Gemini no configurado para análisis técnico."}
+        
+    except Exception as e:
+        print(f"Technical Analysis Error: {e}")
+        return {"error": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
